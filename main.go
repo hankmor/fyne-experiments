@@ -1,7 +1,7 @@
 package main
 
 func main() {
-	helloworld()
+	// helloworld()
 	// windowDemo()
-	// clockDemo()
+	clockDemo()
 }
