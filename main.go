@@ -1,6 +1,6 @@
 package main
 
-import "fyne-experiments/container"
+import "fyne-experiments/widget"
 
 // "fyne-experiments/basic"
 
@@ -9,5 +9,6 @@ func main() {
 	// basic.WindowDemo()
 	// basic.ClockDemo()
 	// canvas.RunDemo()
-	container.RunDemo()
+	// container.RunDemo()
+	widget.RunDemo()
 }

@@ -1,0 +1,296 @@
+package widget
+
+import (
+	"io"
+	"os"
+	"time"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/storage"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
+)
+
+func RunDemo() {
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Widget")
+	myWindow.SetContent(container.New(layout.NewGridLayout(2),
+		widget.NewButton("Accordion", func() {
+			accordion(myApp)
+		}),
+		widget.NewButton("Activity", func() {
+			activity(myApp)
+		}),
+		widget.NewButton("Button", func() {
+			button(myApp)
+		}),
+		widget.NewButton("Card", func() {
+			card(myApp)
+		}),
+		widget.NewButton("CheckBox", func() {
+			checkBox(myApp)
+		}),
+		widget.NewButton("Entry", func() {
+			entry(myApp)
+		}),
+		widget.NewButton("FileIcon", func() {
+			fileicon(myApp)
+		}),
+		widget.NewButton("Form", func() {
+			form(myApp)
+		}),
+	))
+	myWindow.ShowAndRun()
+}
+
+// accordion is a widget that displays a list of items in a collapsible section
+func accordion(a fyne.App) {
+	w := a.NewWindow("Accordion")
+	w.SetContent(widget.NewAccordion(
+		// add a famous quote
+		widget.NewAccordionItem("In Life", widget.NewLabel("In life, as in art, the beautiful moves in curves.")),
+		widget.NewAccordionItem("In Art", widget.NewLabel("Of all possessions a friend is the most precious.")),
+		widget.NewAccordionItem("In Friendship", widget.NewLabel("A true friend is someone who is there for you when he'd rather be anywhere else.")),
+		widget.NewAccordionItem("In Love", widget.NewLabel("Love is the only force capable of transforming an enemy into a friend.")),
+		widget.NewAccordionItem("In Music", widget.NewLabel("Music is the universal language of mankind.")),
+		widget.NewAccordionItem("In Literature", widget.NewLabel("The only way to do great work is to love what you do.")),
+	))
+	w.Show()
+}
+
+// activity is a widget that displays a spinning activity indicator
+func activity(a fyne.App) {
+	w := a.NewWindow("Activity")
+	activity := widget.NewActivity()
+	activity.Start()
+	w.SetContent(activity)
+	go func() {
+		time.Sleep(3 * time.Second)
+		activity.Stop()
+	}()
+	w.Show()
+}
+
+func button(a fyne.App) {
+	w := a.NewWindow("Button")
+	// normal button
+	normalButton := widget.NewButton("Button", func() {
+		println("Button clicked")
+	})
+	// button with icon
+	icon := theme.CancelIcon()
+	button := widget.NewButtonWithIcon("Cancel", icon, func() {
+		println("Cancel button clicked")
+	})
+	w.SetContent(container.NewVBox(normalButton, button))
+	w.Show()
+}
+
+func card(a fyne.App) {
+	w := a.NewWindow("Card")
+
+	c1 := widget.NewCard("In Life", "Life is art", widget.NewLabel("In life, as in art, the beautiful moves in curves."))
+
+	// bf.jpg is a 40x40 image
+	f, err := os.Open("bf.jpg")
+	if err != nil {
+		println("Error opening image:", err)
+		return
+	}
+	defer f.Close()
+	bytes, err := io.ReadAll(f)
+	if err != nil {
+		println("Error reading image:", err)
+		return
+	}
+	img := canvas.NewImageFromResource(fyne.NewStaticResource("image", bytes))
+	// set the image size
+	// img.Resize(fyne.NewSize(40, 40)) // fix the image size
+	img.SetMinSize(fyne.NewSize(0, 120))   // set the minimum size, width is 0, so the image will auto adjust the width
+	img.FillMode = canvas.ImageFillContain // keep the aspect ratio, fully display the image
+	// or use other fill modes:
+	// img.FillMode = canvas.ImageFillStretch // stretch to fill the entire area
+	// img.FillMode = canvas.ImageFillOriginal // keep the original size
+	// put the image at the top
+	// create a custom card layout: image at the top, then title and subtitle
+	title := canvas.NewText("In Art", nil)
+	title.TextSize = 18                          // set the title font size
+	title.TextStyle = fyne.TextStyle{Bold: true} // set the title to bold
+
+	subtitle := canvas.NewText("Art is life", nil)
+	subtitle.TextSize = 14                            // set the subtitle font size
+	subtitle.TextStyle = fyne.TextStyle{Italic: true} // set the subtitle to italic
+
+	c2Content := container.NewVBox(
+		img,
+		title,
+		subtitle,
+	)
+	c2 := widget.NewCard("", "", nil)
+	c2.SetContent(c2Content)
+
+	// 让窗口自动适应内容大小，或者设置合适的固定大小
+	// 或者不设置大小，让窗口自动调整
+	w.SetContent(container.New(layout.NewVBoxLayout(), c1, c2))
+	w.Show()
+}
+
+func checkBox(a fyne.App) {
+	w := a.NewWindow("CheckBox")
+	checkBox := widget.NewCheck("I agree to the terms and conditions", func(b bool) {
+		println("CheckBox value:", b)
+	})
+	checkBox.SetChecked(true) // default checked
+	w.SetContent(container.NewVBox(checkBox))
+	w.Show()
+}
+
+func entry(a fyne.App) {
+	w := a.NewWindow("Entry")
+	entry := widget.NewEntry()
+	entry.SetText("Hello, World!")
+	entry.OnChanged = func(text string) {
+		println("Entry value:", text)
+	}
+	passwordEntry := widget.NewPasswordEntry()
+	passwordEntry.SetText("123456")
+	passwordEntry.OnChanged = func(text string) {
+		println("PasswordEntry value:", text)
+	}
+	selectEntry := widget.NewSelectEntry([]string{"Hello", "World", "Fyne"})
+	selectEntry.OnChanged = func(text string) {
+		println("SelectEntry value:", text)
+	}
+	w.SetContent(container.NewVBox(entry, passwordEntry, selectEntry))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func fileicon(a fyne.App) {
+	w := a.NewWindow("FileIcon")
+
+	// 获取当前工作目录
+	currentDir, err := os.Getwd()
+	if err != nil {
+		println("Error getting current directory:", err)
+		return
+	}
+	println("Current directory:", currentDir)
+
+	// 方法1: 使用系统文件图标（根据文件扩展名自动选择）
+	systemFileIcon := widget.NewFileIcon(nil)
+	systemFileIcon.SetURI(storage.NewFileURI("go.mod")) // 项目根目录的go.mod文件
+
+	systemFolderIcon := widget.NewFileIcon(nil)
+	systemFolderIcon.SetURI(storage.NewFileURI("widget")) // 项目下的widget文件夹
+
+	systemImageIcon := widget.NewFileIcon(nil)
+	systemImageIcon.SetURI(storage.NewFileURI("bf.jpg")) // 项目根目录的图片文件
+
+	// 方法2: 使用Fyne主题图标（系统风格但统一）
+	themeFileIcon := widget.NewButtonWithIcon("", theme.DocumentIcon(), func() {})
+	themeFileIcon.Importance = widget.LowImportance // 移除按钮样式
+
+	themeFolderIcon := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {})
+	themeFolderIcon.Importance = widget.LowImportance
+
+	themeImageIcon := widget.NewButtonWithIcon("", theme.ComputerIcon(), func() {})
+	themeImageIcon.Importance = widget.LowImportance
+
+	// 方法3: 使用canvas.Image显示主题图标
+	canvasFileIcon := canvas.NewImageFromResource(theme.DocumentIcon())
+	canvasFileIcon.SetMinSize(fyne.NewSize(32, 32))
+	canvasFileIcon.FillMode = canvas.ImageFillContain
+
+	canvasFolderIcon := canvas.NewImageFromResource(theme.FolderIcon())
+	canvasFolderIcon.SetMinSize(fyne.NewSize(32, 32))
+	canvasFolderIcon.FillMode = canvas.ImageFillContain
+
+	canvasImageIcon := canvas.NewImageFromResource(theme.ComputerIcon())
+	canvasImageIcon.SetMinSize(fyne.NewSize(32, 32))
+	canvasImageIcon.FillMode = canvas.ImageFillContain
+
+	// 方法4: 使用不同大小的系统图标
+	largeSystemIcon := widget.NewFileIcon(nil)
+	largeSystemIcon.SetURI(storage.NewFileURI("go.mod"))
+	largeSystemIcon.Resize(fyne.NewSize(48, 48))
+
+	smallSystemIcon := widget.NewFileIcon(nil)
+	smallSystemIcon.SetURI(storage.NewFileURI("main.go"))
+	smallSystemIcon.Resize(fyne.NewSize(16, 16))
+
+	// 方法5: 动态获取项目目录下的文件和文件夹
+	var projectIcons []fyne.CanvasObject
+
+	// 读取当前目录下的文件和文件夹
+	entries, err := os.ReadDir(".")
+	if err != nil {
+		println("Error reading directory:", err)
+	} else {
+		// 只显示前6个项目
+		count := 0
+		for _, entry := range entries {
+			if count >= 6 {
+				break
+			}
+
+			// 创建文件图标
+			icon := widget.NewFileIcon(nil)
+			icon.SetURI(storage.NewFileURI(entry.Name()))
+
+			// 创建标签显示文件名
+			label := widget.NewLabel(entry.Name())
+			if len(entry.Name()) > 10 {
+				label.SetText(entry.Name()[:10] + "...")
+			}
+
+			// 添加到容器
+			projectIcons = append(projectIcons, container.NewVBox(icon, label))
+			count++
+		}
+	}
+
+	// 创建所有图标容器
+	var allIcons []fyne.CanvasObject
+
+	// 添加固定的示例图标
+	allIcons = append(allIcons,
+		container.NewVBox(systemFileIcon, widget.NewLabel("go.mod")),
+		container.NewVBox(systemFolderIcon, widget.NewLabel("widget/")),
+		container.NewVBox(systemImageIcon, widget.NewLabel("bf.jpg")),
+		container.NewVBox(themeFileIcon, widget.NewLabel("Theme File")),
+		container.NewVBox(themeFolderIcon, widget.NewLabel("Theme Folder")),
+		container.NewVBox(themeImageIcon, widget.NewLabel("Theme Image")),
+		container.NewVBox(canvasFileIcon, widget.NewLabel("Canvas File")),
+		container.NewVBox(canvasFolderIcon, widget.NewLabel("Canvas Folder")),
+		container.NewVBox(canvasImageIcon, widget.NewLabel("Canvas Image")),
+		container.NewVBox(largeSystemIcon, widget.NewLabel("Large go.mod")),
+		container.NewVBox(smallSystemIcon, widget.NewLabel("Small main.go")),
+	)
+
+	// 添加动态获取的项目文件图标
+	allIcons = append(allIcons, projectIcons...)
+
+	// 使用网格布局排列所有图标
+	content := container.NewGridWithColumns(4, allIcons...)
+
+	w.SetContent(content)
+	w.Resize(fyne.NewSize(500, 400))
+	w.Show()
+}
+
+func form(a fyne.App) {
+	w := a.NewWindow("Form")
+	form := widget.NewForm(
+		widget.NewFormItem("Name", widget.NewEntry()),
+		widget.NewFormItem("Email", widget.NewEntry()),
+		widget.NewFormItem("Password", widget.NewPasswordEntry()),
+	)
+	w.SetContent(form)
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
