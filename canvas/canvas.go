@@ -14,6 +14,14 @@ import (
 func createAndRun() {
 	ap := app.New()
 	w := ap.NewWindow("Canvas")
+	b0 := widget.NewButton("Not Visit Canvas of Window", func() {
+		mw := ap.NewWindow("Not Visit Canvas of Window")
+		mw.Resize(fyne.NewSize(120, 120))
+		// widget is CanvasObject, so it can be set to window
+		// We don't need to visit canvas of window usually
+		mw.SetContent(widget.NewLabel("widget is CanvasObject"))
+		mw.Show()
+	})
 	// create a button to show a new window with a rectangle
 	b1 := widget.NewButton("Rectangle Color", func() {
 		mw := ap.NewWindow("Rectangle Color")
@@ -35,7 +43,7 @@ func createAndRun() {
 		contentCircle(mw.Canvas())
 		mw.Show()
 	})
-	w.SetContent(container.NewVBox(b1, b2, b3))
+	w.SetContent(container.NewVBox(b0, b1, b2, b3))
 	// get canvas from window
 	w.Resize(fyne.NewSize(160, 160))
 	w.ShowAndRun()
