@@ -1,4 +1,4 @@
-package main
+package basic
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestMakeUI(t *testing.T) {
-	out, in := makeUI()
+	out, in := MakeUI()
 	if out.Text != "Hello Fyne!" {
 		t.Errorf("Incorrect text")
 	}

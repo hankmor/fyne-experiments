@@ -1,4 +1,4 @@
-package main
+package basic
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func windowDemo() {
+func WindowDemo() {
 	// create app
 	ap := app.New()
 	// create window to show sth.

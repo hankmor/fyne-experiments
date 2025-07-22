@@ -1,4 +1,4 @@
-package main
+package basic
 
 import (
 	"image/color"
@@ -9,7 +9,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 )
 
-func clockDemo() {
+func ClockDemo() {
 	ap := app.New()
 	w := ap.NewWindow("Clock")
 
