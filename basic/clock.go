@@ -5,19 +5,23 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/widget"
 )
 
-func ClockDemo() {
-	ap := app.New()
-	w := ap.NewWindow("Clock")
+func ClockDemo(a fyne.App) fyne.CanvasObject {
+	return widget.NewButton("Clock", func() {
+		clockDemo(a)
+	})
+}
 
+func clockDemo(a fyne.App) {
+	win := a.NewWindow("Clock")
 	c := color.NRGBA{G: 0xff, A: 200}
 	output := canvas.NewText(time.Now().Format(time.DateTime), c) // green color
 	output.TextStyle.Monospace = true                             // monospace font style
 	output.TextSize = 32                                          // font size
-	w.SetContent(output)
+	win.SetContent(output)
 
 	// update time in goroutine
 	go func() {
@@ -30,5 +34,5 @@ func ClockDemo() {
 			})
 		}
 	}()
-	w.ShowAndRun()
+	win.Show()
 }

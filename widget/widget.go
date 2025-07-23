@@ -9,7 +9,6 @@ import (
 	"image/color"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
@@ -18,64 +17,68 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func RunDemo() {
-	myApp := app.New()
-	// myApp.Settings().SetTheme(theme.LightTheme())
-	myWindow := myApp.NewWindow("Widget")
-	myWindow.SetContent(container.New(layout.NewGridLayout(4),
+func RunDemo(a fyne.App) fyne.CanvasObject {
+	return widget.NewButton("Widget", func() {
+		widgetDemo(a)
+	})
+}
+
+func widgetDemo(a fyne.App) {
+	win := a.NewWindow("Widget")
+	win.SetContent(container.New(layout.NewGridLayout(4),
 		widget.NewButton("Accordion", func() {
-			accordion(myApp)
+			accordion(a)
 		}),
 		widget.NewButton("Activity", func() {
-			activity(myApp)
+			activity(a)
 		}),
 		widget.NewButton("Button", func() {
-			button(myApp)
+			button(a)
 		}),
 		widget.NewButton("Card", func() {
-			card(myApp)
+			card(a)
 		}),
 		widget.NewButton("CheckBox", func() {
-			checkBox(myApp)
+			checkBox(a)
 		}),
 		widget.NewButton("Entry", func() {
-			entry(myApp)
+			entry(a)
 		}),
 		widget.NewButton("FileIcon", func() {
-			fileicon(myApp)
+			fileicon(a)
 		}),
 		widget.NewButton("Form", func() {
-			form(myApp)
+			form(a)
 		}),
 		widget.NewButton("Hyperlink", func() {
-			hyperlink(myApp)
+			hyperlink(a)
 		}),
 		widget.NewButton("Icon", func() {
-			icon(myApp)
+			icon(a)
 		}),
 		widget.NewButton("Label", func() {
-			lable(myApp)
+			lable(a)
 		}),
 		widget.NewButton("ProgressBar", func() {
-			progressBar(myApp)
+			progressBar(a)
 		}),
 		widget.NewButton("RadioGroup", func() {
-			radioGroup(myApp)
+			radioGroup(a)
 		}),
 		widget.NewButton("RichText", func() {
-			richText(myApp)
+			richText(a)
 		}),
 		widget.NewButton("Select", func() {
-			selectWidget(myApp)
+			selectWidget(a)
 		}),
 		widget.NewButton("SelectEntry", func() {
-			selectEntry(myApp)
+			selectEntry(a)
 		}),
 		widget.NewButton("Separator", func() {
-			separator(myApp)
+			separator(a)
 		}),
 	))
-	myWindow.ShowAndRun()
+	win.Show()
 }
 
 // accordion is a widget that displays a list of items in a collapsible section

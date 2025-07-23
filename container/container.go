@@ -4,39 +4,43 @@ import (
 	"image/color"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
-func RunDemo() {
-	myApp := app.New()
-	myWindow := myApp.NewWindow("Container")
+func RunDemo(a fyne.App) fyne.CanvasObject {
+	return widget.NewButton("Container", func() {
+		containerDemo(a)
+	})
+}
+
+func containerDemo(a fyne.App) {
+	win := a.NewWindow("Container")
 	content := container.New(layout.NewGridLayout(2),
 		widget.NewButton("Without layout", func() {
-			withoutLayoutDemo(myApp)
+			withoutLayoutDemo(a)
 		}),
 		widget.NewButton("With Grid Layout", func() {
-			withGridLayoutDemo(myApp)
+			withGridLayoutDemo(a)
 		}),
 		widget.NewButton("With Form Layout", func() {
-			withFormLayoutDemo(myApp)
+			withFormLayoutDemo(a)
 		}),
 		widget.NewButton("With HBox Layout", func() {
-			withHBoxLayoutDemo(myApp)
+			withHBoxLayoutDemo(a)
 		}),
 		widget.NewButton("With VBox Layout", func() {
-			withVBoxLayoutDemo(myApp)
+			withVBoxLayoutDemo(a)
 		}),
 	)
-	myWindow.SetContent(content)
-	myWindow.ShowAndRun()
+	win.SetContent(content)
+	win.Show()
 }
 
 func withoutLayoutDemo(a fyne.App) {
-	w := a.NewWindow("Without layout")
+	win := a.NewWindow("Without layout")
 	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 	text1 := canvas.NewText("Hello", green)
 	text2 := canvas.NewText("There", green)
@@ -46,51 +50,55 @@ func withoutLayoutDemo(a fyne.App) {
 	// container.NewWithoutLayout is a container that does not use layout
 	// so we can move text2 to the right of text1
 	content := container.NewWithoutLayout(text1, text2, text3)
-	w.SetContent(content)
-	w.Show()
+	win.SetContent(content)
+	win.Show()
 }
 
 func withGridLayoutDemo(a fyne.App) {
-	w := a.NewWindow("With Grid Layout")
+	win := a.NewWindow("With Grid Layout")
 	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 	text1 := canvas.NewText("Hello", green)
 	text2 := canvas.NewText("There", green)
 	text3 := canvas.NewText("World", green)
 	// layout.NewGridLayout(3) is a grid layout with 3 columns
 	content := container.New(layout.NewGridLayout(3), text1, text2, text3)
-	w.SetContent(content)
-	w.Show()
+	win.SetContent(content)
+	win.Show()
 }
 
 func withFormLayoutDemo(a fyne.App) {
-	w := a.NewWindow("With Form Layout")
-	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
-	text1 := canvas.NewText("Hello", green)
-	text2 := canvas.NewText("There", green)
-	text3 := canvas.NewText("World", green)
-	content := container.New(layout.NewFormLayout(), text1, text2, text3)
-	w.SetContent(content)
-	w.Show()
+	win := a.NewWindow("With Form Layout")
+	text1 := widget.NewLabel("Name")
+	entry1 := widget.NewEntry()
+	text2 := widget.NewLabel("Age")
+	entry2 := widget.NewEntry()
+	text3 := widget.NewLabel("Gender")
+	radio1 := widget.NewRadioGroup([]string{"Male", "Female"}, func(s string) {
+		println("Gender:", s)
+	})
+	content := container.New(layout.NewFormLayout(), text1, entry1, text2, entry2, text3, radio1)
+	win.SetContent(content)
+	win.Show()
 }
 
 func withHBoxLayoutDemo(a fyne.App) {
-	w := a.NewWindow("With HBox Layout")
+	win := a.NewWindow("With HBox Layout")
 	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 	text1 := canvas.NewText("Hello", green)
 	text2 := canvas.NewText("There", green)
 	text3 := canvas.NewText("World", green)
 	content := container.New(layout.NewHBoxLayout(), text1, text2, text3)
-	w.SetContent(content)
-	w.Show()
+	win.SetContent(content)
+	win.Show()
 }
 
 func withVBoxLayoutDemo(a fyne.App) {
-	w := a.NewWindow("With VBox Layout")
+	win := a.NewWindow("With VBox Layout")
 	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 	text1 := canvas.NewText("Hello", green)
 	text2 := canvas.NewText("There", green)
 	text3 := canvas.NewText("World", green)
 	content := container.New(layout.NewVBoxLayout(), text1, text2, text3)
-	w.SetContent(content)
-	w.Show()
+	win.SetContent(content)
+	win.Show()
 }

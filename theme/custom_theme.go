@@ -5,7 +5,6 @@ import (
 	"net/url"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -34,11 +33,10 @@ func (m myTheme) Size(name fyne.ThemeSizeName) float32 {
 	return theme.DefaultTheme().Size(name)
 }
 
-func CustomThemeDemo() {
-	a := app.New()
+func customThemeDemo(a fyne.App) {
 	a.Settings().SetTheme(myTheme{}) // 设置自定义主题, 这是全局设置，所有的超链接都会使用这个主题
-	w := a.NewWindow("Custom Theme Hyperlink")
-	w.Resize(fyne.NewSize(400, 200))
+	win := a.NewWindow("Custom Theme Hyperlink")
+	win.Resize(fyne.NewSize(400, 200))
 
 	// 创建 URL
 	url, err := url.Parse("https://hankmo.com")
@@ -56,10 +54,10 @@ func CustomThemeDemo() {
 	)
 
 	// 设置窗口内容
-	w.SetContent(container.NewVBox(
+	win.SetContent(container.NewVBox(
 		hyperlink,
 		widget.NewLabel("Red hyperlink with custom theme"),
 	))
 
-	w.ShowAndRun()
+	win.Show()
 }

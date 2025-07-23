@@ -5,16 +5,19 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
-func WindowDemo() {
-	// create app
-	ap := app.New()
+func WindowDemo(a fyne.App) fyne.CanvasObject {
+	return widget.NewButton("Window", func() {
+		windowDemo(a)
+	})
+}
+
+func windowDemo(a fyne.App) {
 	// create window to show sth.
-	w := ap.NewWindow("Hello fyne")
+	win := a.NewWindow("Window")
 	// create a label as content of window
 	l := widget.NewLabel("This is a fyne demo!")
 	// new update button
@@ -23,18 +26,18 @@ func WindowDemo() {
 		l.SetText(tm)
 	})
 	// window size
-	w.Resize(fyne.NewSize(200, 100))
+	win.Resize(fyne.NewSize(200, 100))
 	// create a new window top on current window
 	openBtn := widget.NewButton("Open Window", func() {
-		w := ap.NewWindow("Top Window")
-		w.SetContent(widget.NewLabel("This is a top window"))
-		w.Resize(fyne.NewSize(200, 100))
-		w.Show()
+		topWin := a.NewWindow("Top Window")
+		topWin.SetContent(widget.NewLabel("This is a top window"))
+		topWin.Resize(fyne.NewSize(200, 100))
+		topWin.Show()
 	})
 	// add label and button to window
-	w.SetContent(container.NewVBox(l, b, openBtn))
+	win.SetContent(container.NewVBox(l, b, openBtn))
 	// show window and run the app
-	w.ShowAndRun()
+	win.Show()
 	// hook method after exited
 	tidyup()
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestMakeUI(t *testing.T) {
-	out, in := MakeUI()
+	out, in := makeUI()
 	if out.Text != "Hello Fyne!" {
 		t.Errorf("Incorrect text")
 	}
