@@ -49,6 +49,9 @@ func RunDemo() {
 		widget.NewButton("Hyperlink", func() {
 			hyperlink(myApp)
 		}),
+		widget.NewButton("Icon", func() {
+			icon(myApp)
+		}),
 	))
 	myWindow.ShowAndRun()
 }
@@ -375,5 +378,22 @@ func hyperlink(a fyne.App) {
 
 	w.SetContent(content)
 	w.Resize(fyne.NewSize(400, 500))
+	w.Show()
+}
+
+func icon(a fyne.App) {
+	w := a.NewWindow("Icon")
+	cancelIcon := widget.NewIcon(theme.CancelIcon())
+	cancelContainer := container.NewVBox(
+		cancelIcon,
+		widget.NewLabel("Cancel Icon"),
+	)
+	okIcon := widget.NewIcon(theme.ConfirmIcon())
+	okContainer := container.NewVBox(
+		okIcon,
+		widget.NewLabel("OK Icon"),
+	)
+	w.SetContent(container.NewHBox(cancelContainer, okContainer))
+	w.Resize(fyne.NewSize(200, 100))
 	w.Show()
 }
