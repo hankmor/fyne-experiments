@@ -20,8 +20,9 @@ import (
 
 func RunDemo() {
 	myApp := app.New()
+	// myApp.Settings().SetTheme(theme.LightTheme())
 	myWindow := myApp.NewWindow("Widget")
-	myWindow.SetContent(container.New(layout.NewGridLayout(2),
+	myWindow.SetContent(container.New(layout.NewGridLayout(4),
 		widget.NewButton("Accordion", func() {
 			accordion(myApp)
 		}),
@@ -51,6 +52,27 @@ func RunDemo() {
 		}),
 		widget.NewButton("Icon", func() {
 			icon(myApp)
+		}),
+		widget.NewButton("Label", func() {
+			lable(myApp)
+		}),
+		widget.NewButton("ProgressBar", func() {
+			progressBar(myApp)
+		}),
+		widget.NewButton("RadioGroup", func() {
+			radioGroup(myApp)
+		}),
+		widget.NewButton("RichText", func() {
+			richText(myApp)
+		}),
+		widget.NewButton("Select", func() {
+			selectWidget(myApp)
+		}),
+		widget.NewButton("SelectEntry", func() {
+			selectEntry(myApp)
+		}),
+		widget.NewButton("Separator", func() {
+			separator(myApp)
 		}),
 	))
 	myWindow.ShowAndRun()
@@ -395,5 +417,146 @@ func icon(a fyne.App) {
 	)
 	w.SetContent(container.NewHBox(cancelContainer, okContainer))
 	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func lable(a fyne.App) {
+	w := a.NewWindow("Label")
+	w.SetContent(widget.NewLabel("Hello, World!"))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func progressBar(a fyne.App) {
+	w := a.NewWindow("ProgressBar")
+	progressBar := widget.NewProgressBar()
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			progressBar.SetValue(float64(i+1) / 10)
+			// progressBar.Refresh() // no need to refresh, it will be refreshed after SetValue automatically
+		}
+	}()
+	progressBarInfinite := widget.NewProgressBarInfinite()
+	progressBarInfinite.Start()
+	go func() {
+		time.Sleep(10 * time.Second)
+		progressBarInfinite.Stop()
+	}()
+	w.SetContent(container.NewVBox(progressBar, progressBarInfinite))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func radioGroup(a fyne.App) {
+	w := a.NewWindow("RadioGroup")
+	radioGroup := widget.NewRadioGroup([]string{"Option 1", "Option 2", "Option 3"}, func(s string) {
+		println("RadioGroup value:", s)
+	})
+	w.SetContent(radioGroup)
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func richText(a fyne.App) {
+	w := a.NewWindow("RichText")
+	richText := widget.NewRichText()
+	richText.Segments = append(richText.Segments, &widget.TextSegment{
+		Style: widget.RichTextStyle{
+			Alignment: fyne.TextAlignCenter,
+			ColorName: theme.ColorNameForeground,
+		},
+		Text: "Hello, World!",
+	})
+	md := widget.NewRichTextFromMarkdown(`
+# Hello, World!
+
+- This is a rich text widget.
+- This is a rich text widget.
+
+[https://hankmo.com](https://hankmo.com)
+`)
+	w.SetContent(container.New(layout.NewHBoxLayout(), richText, md))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+// Select is a widget that allows the user to select an option from a list of options.
+func selectWidget(a fyne.App) {
+	w := a.NewWindow("Select")
+	selectWidget := widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) {
+		println("Select value:", s)
+	})
+	w.SetContent(selectWidget)
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+// SelectEntry is an input field which supports selecting from a fixed set of options.
+// 可以输入，也可以选择
+func selectEntry(a fyne.App) {
+	w := a.NewWindow("SelectEntry")
+	selectEntry := widget.NewSelectEntry([]string{"Option 1", "Option 2", "Option 3"})
+	selectEntry.SetPlaceHolder("Select an option")
+	selectEntry.OnChanged = func(s string) {
+		println("SelectEntry value:", s)
+	}
+	w.SetContent(selectEntry)
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func separator(a fyne.App) {
+	w := a.NewWindow("Separator")
+
+	// 水平分离器示例
+	button1 := widget.NewButton("Button 1", func() {
+		println("Button 1 clicked")
+	})
+	button2 := widget.NewButton("Button 2", func() {
+		println("Button 2 clicked")
+	})
+	button3 := widget.NewButton("Button 3", func() {
+		println("Button 3 clicked")
+	})
+	button4 := widget.NewButton("Button 4", func() {
+		println("Button 4 clicked")
+	})
+	button5 := widget.NewButton("Button 5", func() {
+		println("Button 5 clicked")
+	})
+
+	// 垂直分离器示例
+	label1 := widget.NewLabel("上侧内容")
+	label2 := widget.NewLabel("下侧内容")
+
+	// 使用不同的布局来展示分离器
+	// 水平布局：按钮 - 分离器 - 按钮
+	horizontalLayout := container.NewHBox(button1, widget.NewSeparator(), button2)
+
+	// 垂直布局：标签 - 分离器 - 标签
+	verticalLayout := container.NewVBox(label1, widget.NewSeparator(), label2)
+
+	// 混合布局：按钮 - 分离器 - 按钮 - 分离器 - 按钮
+	mixedLayout := container.NewVBox(
+		button3,
+		widget.NewSeparator(),
+		button4,
+		widget.NewSeparator(),
+		button5,
+	)
+
+	// 将所有示例放在一个容器中
+	content := container.NewVBox(
+		widget.NewLabel("水平分离器:"),
+		horizontalLayout,
+		widget.NewLabel("垂直分离器:"),
+		verticalLayout,
+		widget.NewLabel("混合布局:"),
+		mixedLayout,
+	)
+
+	w.SetContent(content)
+	// w.Resize(fyne.NewSize(400, 300))
 	w.Show()
 }
