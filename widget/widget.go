@@ -2,8 +2,11 @@ package widget
 
 import (
 	"io"
+	"net/url"
 	"os"
 	"time"
+
+	"image/color"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -42,6 +45,9 @@ func RunDemo() {
 		}),
 		widget.NewButton("Form", func() {
 			form(myApp)
+		}),
+		widget.NewButton("Hyperlink", func() {
+			hyperlink(myApp)
 		}),
 	))
 	myWindow.ShowAndRun()
@@ -292,5 +298,82 @@ func form(a fyne.App) {
 	)
 	w.SetContent(form)
 	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func hyperlink(a fyne.App) {
+	w := a.NewWindow("Hyperlink")
+
+	// 方法1: 使用widget.NewHyperlink (基础方法，样式选项有限)
+	basicHyperlink := widget.NewHyperlink("https://hankmo.com", &url.URL{
+		Scheme: "https",
+		Host:   "hankmo.com",
+	})
+	basicHyperlink.Alignment = fyne.TextAlignCenter
+	// 设置超链接字体样式 (可用的样式选项)
+	basicHyperlink.TextStyle = fyne.TextStyle{
+		Bold:      true,
+		Monospace: true,
+		Symbol:    true,
+		Underline: true,
+	}
+
+	// 方法2: 使用canvas.Text创建自定义样式的超链接 (推荐方法)
+	// 创建带样式的文本
+	blueColor := color.NRGBA{R: 0, G: 0, B: 255, A: 255} // 蓝色
+	customText := canvas.NewText("https://hankmo.com", blueColor)
+	customText.TextSize = 18 // 设置字号
+	customText.TextStyle = fyne.TextStyle{
+		Bold:      true,
+		Underline: true,
+	}
+	customText.Alignment = fyne.TextAlignCenter
+
+	// 方法3: 使用不同颜色和大小的超链接
+	redColor := color.NRGBA{R: 255, G: 0, B: 0, A: 255} // 红色
+	largeHyperlink := canvas.NewText("大号超链接", redColor)
+	largeHyperlink.TextSize = 24
+	largeHyperlink.TextStyle = fyne.TextStyle{Bold: true, Underline: true}
+	largeHyperlink.Alignment = fyne.TextAlignCenter
+
+	greenColor := color.NRGBA{R: 0, G: 255, B: 0, A: 255} // 绿色
+	smallHyperlink := canvas.NewText("小号超链接", greenColor)
+	smallHyperlink.TextSize = 12
+	smallHyperlink.TextStyle = fyne.TextStyle{Italic: true, Underline: true}
+	smallHyperlink.Alignment = fyne.TextAlignCenter
+
+	// 方法4: 使用自定义颜色
+	purpleColor := color.NRGBA{R: 128, G: 0, B: 128, A: 255} // 紫色
+	customColorHyperlink := canvas.NewText("自定义颜色超链接", purpleColor)
+	customColorHyperlink.TextSize = 16
+	customColorHyperlink.TextStyle = fyne.TextStyle{Bold: true, Underline: true}
+	customColorHyperlink.Alignment = fyne.TextAlignCenter
+
+	// 方法5: 使用按钮样式的超链接
+	buttonStyleHyperlink := widget.NewButton("按钮样式超链接", func() {
+		u, _ := url.Parse("https://hankmo.com")
+		fyne.CurrentApp().OpenURL(u)
+	})
+	buttonStyleHyperlink.Importance = widget.LowImportance // 移除按钮边框
+
+	// 方法6: 使用自定义超链接
+	customHyperlink := NewCustomHyperlink("自定义超链接", &url.URL{
+		Scheme: "https",
+		Host:   "hankmo.com",
+	})
+
+	// 将所有超链接放在容器中
+	content := container.NewVBox(
+		widget.NewLabel("基础超链接(样式有限):"), basicHyperlink,
+		widget.NewLabel("自定义样式文本 (仅显示):"), customText,
+		widget.NewLabel("大号文本 (仅显示):"), largeHyperlink,
+		widget.NewLabel("小号文本 (仅显示):"), smallHyperlink,
+		widget.NewLabel("自定义颜色文本 (仅显示):"), customColorHyperlink,
+		widget.NewLabel("按钮样式超链接:"), buttonStyleHyperlink,
+		widget.NewLabel("自定义超链接控件:"), customHyperlink,
+	)
+
+	w.SetContent(content)
+	w.Resize(fyne.NewSize(400, 500))
 	w.Show()
 }

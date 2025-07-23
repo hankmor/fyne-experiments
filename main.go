@@ -11,4 +11,5 @@ func main() {
 	// canvas.RunDemo()
 	// container.RunDemo()
 	widget.RunDemo()
+	// theme.ThemeDemo()
 }
