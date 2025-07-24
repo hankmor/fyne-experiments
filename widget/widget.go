@@ -1,6 +1,7 @@
 package widget
 
 import (
+	"fmt"
 	"io"
 	"net/url"
 	"os"
@@ -25,7 +26,20 @@ func RunDemo(a fyne.App) fyne.CanvasObject {
 
 func widgetDemo(a fyne.App) {
 	win := a.NewWindow("Widget")
-	win.SetContent(container.New(layout.NewGridLayout(4),
+	normalWidget := container.New(layout.NewVBoxLayout(), widget.NewLabel("Normal Widget:"), normalWidgets(a))
+	containerWidget := container.New(layout.NewVBoxLayout(), widget.NewLabel("Container Widget:"), containerWidgets(a))
+	win.SetContent(container.New(
+		layout.NewVBoxLayout(),
+		widget.NewSeparator(),
+		normalWidget,
+		widget.NewSeparator(),
+		containerWidget,
+	))
+	win.Show()
+}
+
+func normalWidgets(a fyne.App) fyne.CanvasObject {
+	return container.New(layout.NewGridLayout(4),
 		widget.NewButton("Accordion", func() {
 			accordion(a)
 		}),
@@ -77,9 +91,30 @@ func widgetDemo(a fyne.App) {
 		widget.NewButton("Separator", func() {
 			separator(a)
 		}),
-	))
-	win.Show()
+		widget.NewButton("Slider", func() {
+			slide(a)
+		}),
+		widget.NewButton("TextGrid", func() {
+			textGrid(a)
+		}),
+	)
 }
+
+func containerWidgets(a fyne.App) fyne.CanvasObject {
+	return container.New(layout.NewGridLayout(4),
+		widget.NewButton("AppTabs", func() {
+			appTabs(a)
+		}),
+		widget.NewButton("Scroll", func() {
+			scroll(a)
+		}),
+		widget.NewButton("Split", func() {
+			split(a)
+		}),
+	)
+}
+
+// normal widgets in widget package
 
 // accordion is a widget that displays a list of items in a collapsible section
 func accordion(a fyne.App) {
@@ -561,5 +596,69 @@ func separator(a fyne.App) {
 
 	w.SetContent(content)
 	// w.Resize(fyne.NewSize(400, 300))
+	w.Show()
+}
+
+func slide(a fyne.App) {
+	w := a.NewWindow("Slide")
+	label := widget.NewLabel("0")
+	slide := widget.NewSlider(0, 100)
+	slide.OnChanged = func(value float64) {
+		println("Slider value:", int(value))
+		label.SetText(fmt.Sprintf("%d", int(value)))
+		label.Refresh()
+	}
+	w.SetContent(container.NewVBox(label, slide))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func textGrid(a fyne.App) {
+	w := a.NewWindow("TextGrid")
+	label := widget.NewLabel("Hello, World!")
+	grid := widget.NewTextGrid()
+	grid.SetText("Hello, World!")
+	w.SetContent(container.NewVBox(label, grid))
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+// container widgets in container package
+
+func appTabs(a fyne.App) {
+	w := a.NewWindow("AppTabs")
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Tab 1", widget.NewLabel("Tab 1 content")),
+		container.NewTabItem("Tab 2", widget.NewLabel("Tab 2 content")),
+		container.NewTabItem("Tab 3", widget.NewLabel("Tab 3 content")),
+	)
+	tabs.Append(container.NewTabItem("Tab 4", widget.NewLabel("Tab 4 content")))
+	tabs.OnSelected = func(t *container.TabItem) {
+		println("AppTabs selected:", t.Text)
+	}
+	w.SetContent(tabs)
+	w.Resize(fyne.NewSize(200, 100))
+	w.Show()
+}
+
+func scroll(a fyne.App) {
+	w := a.NewWindow("Scroll")
+	scroll := container.NewScroll(
+		container.New(layout.NewVBoxLayout(),
+			widget.NewLabel("Scroll content 1"),
+			widget.NewLabel("Scroll content 2"),
+			widget.NewLabel("Scroll content 3"),
+			widget.NewLabel("Scroll content 4"),
+		))
+	w.SetContent(scroll)
+	w.Resize(fyne.NewSize(50, 100))
+	w.Show()
+}
+
+func split(a fyne.App) {
+	w := a.NewWindow("Split")
+	split := container.NewHSplit(widget.NewLabel("Split content"), widget.NewLabel("Split content"))
+	w.SetContent(split)
+	w.Resize(fyne.NewSize(300, 100))
 	w.Show()
 }
